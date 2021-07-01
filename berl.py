@@ -107,8 +107,8 @@ class Poly:
 
     def gcd(self, a, b):
         # Не расширенный алгоритм евклида
-        if len(a) == 0:
-            return b
+        if len(b) == 0:
+            return a
         return self.gcd(b, a % b)
     
     def deriv(self):
@@ -138,6 +138,15 @@ class Poly:
         return (self // other)[0]
     
     
+    def __pow__(self, p):
+        if p == 0:
+            return Poly([FField(1, self.q)], self.q)
+        elif p % 2 == 1:
+            return self ** (p - 1) * self
+        else:
+            sqrt = self ** (p // 2)
+            return sqrt * sqrt
+    
     def __mod__(self, other):
         # Остаток
         return (self // other)[1]
@@ -163,27 +172,55 @@ def find_ord(f, g):
 
 def berlekamp(f):
     dergcd = f.gcd(f, f.deriv())
-    newf = f / dergcd
-    # TODODODO
+    oldf = f
+    f = f / dergcd
+    # Polynomials x^q^l
+    pols = []
+    for l in range(len(f) - 1):
+        pols.append(monomial(f.q, f.q) ** l % f)
+        # print('mnogochlen ', pols[-1])
+        # TODO this is char of field not amount of elements
+    matrix = [pol.coeffs for pol in pols]
+    for i in range(len(matrix)):
+        matrix[i] += [FField(0, f.q)] * (len(matrix) - len(matrix[i]))
+        matrix[i][i] -= FField(1, f.q)
+        
+    # transpose matrix
+    mt = [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
+    # print matrix
+    print('Matrix: ')
+    for i in mt:
+        print(' '.join(str(j) for j in i).replace('(mod 2)', ''))
     return
 
+def monomial(power, q):
+    return Poly([FField(0, q) for i in range(power)] + [FField(1, q)], q)
 
-#x = FField(10, 17)
-#y = FField(25, 17)
-## print(x + y, x * y, x / y, y / x, x / x)
 
-#p = Poly([x, y, x, x, y], 17)
-##print(p) 
-##print(p * p)
-#rem, div = p / p
-##print(rem)
-##print(div)
+##x = FField(10, 17)
+##y = FField(25, 17)
+### print(x + y, x * y, x / y, y / x, x / x)
 
-a = Poly([FField(4, 5), FField(2, 5), FField(3, 5), FField(0, 5), FField(4, 5)], 5)
-b = Poly([FField(3, 5), FField(1, 5), FField(0, 5), FField(1, 5)], 5)
-#r, d = a / b
-#print(a / b, a % b)
+##p = Poly([x, y, x, x, y], 17)
+###print(p) 
+###print(p * p)
+##rem, div = p / p
+###print(rem)
+###print(div)
 
-print(a, 'der', a.deriv())
+#a = Poly([FField(4, 5), FField(2, 5), FField(3, 5), FField(0, 5), FField(4, 5)], 5)
+#b = Poly([FField(3, 5), FField(1, 5), FField(0, 5), FField(1, 5)], 5)
+##r, d = a / b
+##print(a / b, a % b)
 
-print(a, find_ord(a, a), find_ord(a * a * a * a, a))
+#print(a, 'der', a.deriv())
+
+#print(a, find_ord(a, a), find_ord(a * a * a * a, a))
+
+x8 = Poly([FField(0, 2), FField(0, 2), FField(0, 2), FField(0, 2), 
+           FField(0, 2), FField(0, 2), FField(0, 2), FField(0, 2), FField(1, 2)], 2)
+mods = Poly([FField(1, 2), FField(0, 2), FField(0, 2), FField(0, 2), FField(1, 2), FField(1, 2)], 2)
+#print(x8, mods)
+#print(x8 % mods)
+
+berlekamp(mods)
