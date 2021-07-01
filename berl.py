@@ -123,7 +123,6 @@ class Poly:
         assert self.q == other.q and len(other) != 0
         res_coefs = [FField(0, self.q) for i in range(len(self.coeffs))]
         rem = Poly([coef for coef in self.coeffs], self.q)
-        print(rem)
         while len(rem) >= len(other):
             diff = len(rem) - len(other)
             other_moved = Poly([FField(0, self.q)] * diff + other.coeffs, self.q)
