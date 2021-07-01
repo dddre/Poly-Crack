@@ -191,10 +191,40 @@ def berlekamp(f):
     print('Matrix: ')
     for i in mt:
         print(' '.join(str(j) for j in i).replace('(mod 2)', ''))
-    return
+    
+    #return mt
+    
+    # ZDES' BUDET GAUSS
+    
+    # TODODODO
+    rank = len(mt)
+    
+    hs = []  # list of Polys
+    m = [f]
+    i = 0
+    while len(m) < rank:
+        for i in range(f.q):
+            a = FField(i, f.q)
+            for j in range(len(m)):
+                g = m[j]
+                gcd = g.gcd(g, h[i] - a)
+                if len(gcd) != 0:
+                    # remove and add
+                    m[j] = gcd
+                    m.append(g / gcd)
+    
+    # return ans
+    ans = []
+    for p in m:
+        pord = find_ord(oldf, p)
+        oldf /= p ** pord
+        ans.append((p, pord))
+    return ans
+        
 
 def monomial(power, q):
     return Poly([FField(0, q) for i in range(power)] + [FField(1, q)], q)
+
 
 
 ##x = FField(10, 17)
@@ -223,4 +253,5 @@ mods = Poly([FField(1, 2), FField(0, 2), FField(0, 2), FField(0, 2), FField(1, 2
 #print(x8, mods)
 #print(x8 % mods)
 
-berlekamp(mods)
+m = berlekamp(mods)
+#gauss(m)
