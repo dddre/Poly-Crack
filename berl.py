@@ -10,6 +10,12 @@ class FField:
         # Сложение, результат по модулю
         assert self.q == other.q
         return FField(self.n + other.n, self.q)
+    
+    def __eq__(self, other):
+        # Сравнение с числом и элементом поля
+        if isinstance(other, int):
+            return self == FField(other, self.q) 
+        return self.n == other.n and self.q == other.q
 
     def __sub__(self, other):
         # Вычитание, результат по модулю
@@ -24,10 +30,6 @@ class FField:
         # Умножение, результат по модулю
         assert self.q == other.q
         return FField(self.n * other.n, self.q)
-    
-    def __eq__(self, other):
-        # Сравнение по модулю
-        return self.q == other.q and self.n == other.n
     
     def gcdex(self, a, b, x, y):
         # Расширенный алгоритм Евклида
@@ -253,5 +255,8 @@ mods = Poly([FField(1, 2), FField(0, 2), FField(0, 2), FField(0, 2), FField(1, 2
 #print(x8, mods)
 #print(x8 % mods)
 
-m = berlekamp(mods)
+#m = berlekamp(mods)
 #gauss(m)
+
+five = FField(5, 11)
+print(five == 5, five == FField(5, 11), five == FField(6, 11), five == FField(8, 11))
