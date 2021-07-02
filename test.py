@@ -1,12 +1,11 @@
-from berl import *
+import berl
 
 p = 3
-f = Poly([FField(x,p) for x in [-1,-1,0,-1,1]], p)
-print(f)
-n = len(f)
-for i in range(n):
-    a = [0]*(i*p)+[1]
-    g = Poly([FField(x,p) for x in a], p)
-    print(str(g)+" = "+str(g%f))
-
-berlekamp(f)
+f = berl.Poly([berl.FField(x,p) for x in [1, -1, 0, 1]], p)
+g = berl.Poly([berl.FField(x,p) for x in [1, -1, 0, 2]], p)
+h = berl.Poly([berl.FField(x,p) for x in [1, 2]], p)
+print('f={};  g={}; h={}'.format(f,g,h))
+ff = f*g*g*h*h*h
+print(ff)
+fact = berl.berlekamp(ff)
+print([(str(x), y) for (x,y) in fact])
