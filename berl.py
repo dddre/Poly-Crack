@@ -200,6 +200,13 @@ def Gauss(A, B):
         if(zero_columns_ind[j] == 0):
           cur_raw.append(A[i][j])
       new_A.append(cur_raw)
+    if(len(zero_columns) == len(A)):
+        res=[]
+        for i in range(len(A)):
+            X = [FField(0, A[0][0].q)]*len(A)
+            X[i] = FField(1, A[0][0].q)
+            res.append(X)
+        return res, 0      
     A = new_A
     column = 0
     
