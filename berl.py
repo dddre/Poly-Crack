@@ -308,11 +308,10 @@ def berlekamp(f):
         # print('derived f', f, len(f))
         
         if len(f) == 2:
-            for p in m:
-                pord = find_ord(oldf, f)
-                if pord > 0:
-                    oldf /= f ** pord
-                    ans.append((f, pord))
+            pord = find_ord(oldf, f)
+            if pord > 0:
+                oldf /= f ** pord
+                ans.append((f, pord))
             continue
         
         # Polynomials x^q^l
