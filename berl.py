@@ -212,25 +212,25 @@ def berlekamp(f):
 
     
     m = [f]
-    print('rank is ', rank)
-    k = 0
-    while len(m) < rank:
-        print("m is ", [str(i) for i in m])
-        for i in range(f.q):
-            a = Poly([FField(i, f.q)], f.q)
-            print('a is ', a)
-            for j in range(len(m)):
-                print(k,  j, a)
-                g = m[j]
-                gcd = g.gcd(g, hs[k] - a)
-                print('gcd of ', g, 'and', hs[k] - a, ' is ', gcd, len(gcd))
-                if len(gcd) > 1:
-                    # remove and add
-                    print(" ADD ELEMENTS TO M ", gcd, g / gcd)
-                    m[j] = gcd
-                    m.append(g / gcd)
-                    print([str(x) for x in m])
-        k += 1
+    changed = True
+    while changed:
+        changed = False
+        for ai in range(f.q):
+            if changed: break
+            a = Poly([FField(ai, f.q)], f.q)
+            for h in hs:
+                if changed: break
+                for j in range(len(m)):
+                    if changed: break                    
+                    g = m[j]
+                    gcd = g.gcd(g, h - a)
+                    if len(gcd) > 1 and len(gcd) < len(g):
+                        changed = True
+                        # remove and add
+                        m[j] = gcd
+                        m.append(g / gcd)
+                        print([str(x) for x in m])
+                        break
     
     
     # return ans
@@ -278,5 +278,5 @@ if __name__ == '__main__':
     f = Poly([FField(x,p) for x in [-1,-1,0,-1,1]], p)    
     #m = berlekamp(mods)
     m = berlekamp(f)
-    print(*m)
-    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+    for pol, pw in m:
+        print(pol, 'degree of inclusion is', pw)
