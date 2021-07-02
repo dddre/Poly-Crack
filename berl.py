@@ -112,6 +112,8 @@ class Poly:
         # Не расширенный алгоритм евклида
         if len(b) == 0:
             return a
+        if len(a) == 0:
+            return b
         return self.gcd(b, a % b)
     
     def deriv(self):
@@ -281,70 +283,85 @@ def find_ord(f, g):
     return power
 
 def berlekamp(f):
-    dergcd = f.gcd(f, f.deriv())
-    oldf = f
-    f = f / dergcd
-    # Polynomials x^q^l
-    pols = []
-    for l in range(len(f) - 1):
-        pols.append(monomial(f.q, f.q) ** l % f)
-        # print('mnogochlen ', pols[-1])
-        # TODO this is char of field not amount of elements
-    matrix = [pol.coeffs for pol in pols]
-    for i in range(len(matrix)):
-        matrix[i] += [FField(0, f.q)] * (len(matrix) - len(matrix[i]))
-        matrix[i][i] -= FField(1, f.q)
-        
-    # transpose matrix
-    mt = [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
-    # print matrix
-    print('Matrix: ')
-    for i in mt:
-        print(' '.join(str(j) for j in i).replace('(mod ' + str(f.q) + ')', ''))
-    
-    #return mt
-    
-    # ZDES' BUDET GAUSS
-    mtg, rank = Gauss(mt, [FField(0, f.q) for i in range(len(mt))])
-    rank = len(mtg)
-
-    #print('Matrix: ')
-    #for i in mt:
-        #print(' '.join(str(j) for j in i).replace('(mod ' + str(f.q) + ')', ''))    
-    
-    
-    hs = [Poly(coefs, f.q) for coefs in mtg]
-    print([str(h) for h in hs])
-
-    
-    m = [f]
-    changed = True
-    while changed:
-        changed = False
-        for ai in range(f.q):
-            if changed: break
-            a = Poly([FField(ai, f.q)], f.q)
-            for h in hs:
-                if changed: break
-                for j in range(len(m)):
-                    if changed: break                    
-                    g = m[j]
-                    gcd = g.gcd(g, h - a)
-                    if len(gcd) > 1 and len(gcd) < len(g):
-                        changed = True
-                        # remove and add
-                        m[j] = gcd
-                        m.append(g / gcd)
-                        print([str(x) for x in m])
-                        break
-    
-    
-    # return ans
     ans = []
-    for p in m:
-        pord = find_ord(oldf, p)
-        oldf /= p ** pord
-        ans.append((p, pord))
+    oldf = f    
+    while len(oldf) > 1:
+        f = oldf
+        print(f, f.deriv(), f.gcd(f, f.deriv()))
+        dergcd = f.gcd(f, f.deriv())
+        while len(dergcd) > 1 or len(dergcd) == 0:
+            if len(dergcd) == 0 or len(dergcd) == len(f):
+                # divide all powers by p, for Zp
+                newcoefs = [f.coeffs[i] for i in range(0, len(f.coeffs), f.q)]
+                f = Poly(newcoefs, f.q)
+            else:
+                f = f / dergcd
+            dergcd = f.gcd(f, f.deriv())
+            
+        print('derived f', f, len(f))
+        
+        if len(f) == 2:
+            for p in m:
+                pord = find_ord(oldf, f)
+                if pord > 0:
+                    oldf /= f ** pord
+                    ans.append((f, pord))
+            continue
+        
+        # Polynomials x^q^l
+        pols = []
+        for l in range(len(f) - 1):
+            pols.append(monomial(f.q, f.q) ** l % f)
+            # print('mnogochlen ', pols[-1])
+            # TODO this is char of field not amount of elements
+        matrix = [pol.coeffs for pol in pols]
+        for i in range(len(matrix)):
+            matrix[i] += [FField(0, f.q)] * (len(matrix) - len(matrix[i]))
+            matrix[i][i] -= FField(1, f.q)
+            
+        # transpose matrix
+        print(matrix)
+        mt = [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
+        # print matrix
+        #print('Matrix: ')
+        #for i in mt:
+            #print(' '.join(str(j) for j in i).replace('(mod ' + str(f.q) + ')', ''))
+        
+        print('matrix ', mt)
+        mtg, rank = Gauss(mt, [FField(0, f.q) for i in range(len(mt))])
+        rank = len(mtg)
+    
+        hs = [Poly(coefs, f.q) for coefs in mtg]
+        #print([str(h) for h in hs])
+      
+        m = [f]
+        changed = True
+        while changed:
+            changed = False
+            for ai in range(f.q):
+                if changed: break
+                a = Poly([FField(ai, f.q)], f.q)
+                for h in hs:
+                    if changed: break
+                    for j in range(len(m)):
+                        if changed: break                    
+                        g = m[j]
+                        gcd = g.gcd(g, h - a)
+                        if len(gcd) > 1 and len(gcd) < len(g):
+                            changed = True
+                            # remove and add
+                            m[j] = gcd
+                            m.append(g / gcd)
+                            print([str(x) for x in m])
+                            break
+        
+        # return ans
+        for p in m:
+            pord = find_ord(oldf, p)
+            if pord > 0:
+                oldf /= p ** pord
+                ans.append((p, pord))
+            
     return ans
         
 
