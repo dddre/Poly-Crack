@@ -3,19 +3,8 @@
 
 # In[ ]:
 
+from berl import *
 
-p = 2
-
-myA=[
- [FField(0,p), FField(0,p), FField(0,p),FField(1,p),FField(1,p)],
- [FField(0,p), FField(1,p), FField(0,p),FField(1,p),FField(1,p)],
- [FField(0,p), FField(1,p), FField(1,p),FField(0,p),FField(1,p)],
- [FField(0,p), FField(0,p), FField(0,p),FField(1,p),FField(1,p)],
- [FField(0,p), FField(0,p), FField(1,p),FField(1,p),FField(0,p)],
-]
-
-
-myB = [FField(0,p), FField(0,p),FField(0,p), FField(0,p), FField(0,p)]
 
 
 def SwapRows(A, B, row1, row2):
@@ -100,7 +89,7 @@ def Gauss(A, B):
       X = [FField(0, new_A[0][0].q) for b in new_B]
 
       for i in range(len(new_B) - 1, -1, -1):
-          s = FField(0,p)
+          s = FField(0,A[0][0].q)
           for j in range(i+1, len(new_A[i])):
               s += X[j]*new_A[i][j]
           X[i] = new_B[i] - s
@@ -120,6 +109,4 @@ def Gauss(A, B):
       ans.append(new_X)
 
     return ans, rank
-
-Gauss(myA, myB)
 

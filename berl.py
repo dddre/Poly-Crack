@@ -1,5 +1,8 @@
 # -*- coding: utf8 -*-
 
+from Metod_Gaussa import *
+
+
 class FField:
     def __init__(self, n, q):
         # Консруктор, при инициализации берет число по модулю
@@ -191,28 +194,44 @@ def berlekamp(f):
     # print matrix
     print('Matrix: ')
     for i in mt:
-        print(' '.join(str(j) for j in i).replace('(mod 2)', ''))
+        print(' '.join(str(j) for j in i).replace('(mod ' + str(f.q) + ')', ''))
     
     #return mt
     
     # ZDES' BUDET GAUSS
+    mtg, rank = Gauss(mt, [FField(0, f.q) for i in range(len(mt))])
+    rank = len(mtg)
+
+    #print('Matrix: ')
+    #for i in mt:
+        #print(' '.join(str(j) for j in i).replace('(mod ' + str(f.q) + ')', ''))    
     
-    # TODODODO
-    rank = len(mt)
     
-    hs = []  # list of Polys
+    hs = [Poly(coefs, f.q) for coefs in mtg]
+    print([str(h) for h in hs])
+
+    
     m = [f]
-    i = 0
+    print('rank is ', rank)
+    k = 0
     while len(m) < rank:
+        print("m is ", [str(i) for i in m])
         for i in range(f.q):
-            a = FField(i, f.q)
+            a = Poly([FField(i, f.q)], f.q)
+            print('a is ', a)
             for j in range(len(m)):
+                print(k,  j, a)
                 g = m[j]
-                gcd = g.gcd(g, h[i] - a)
-                if len(gcd) != 0:
+                gcd = g.gcd(g, hs[k] - a)
+                print('gcd of ', g, 'and', hs[k] - a, ' is ', gcd, len(gcd))
+                if len(gcd) > 1:
                     # remove and add
+                    print(" ADD ELEMENTS TO M ", gcd, g / gcd)
                     m[j] = gcd
                     m.append(g / gcd)
+                    print([str(x) for x in m])
+        k += 1
+    
     
     # return ans
     ans = []
@@ -227,35 +246,37 @@ def monomial(power, q):
     return Poly([FField(0, q) for i in range(power)] + [FField(1, q)], q)
 
 
-
-##x = FField(10, 17)
-##y = FField(25, 17)
-### print(x + y, x * y, x / y, y / x, x / x)
-
-##p = Poly([x, y, x, x, y], 17)
-###print(p) 
-###print(p * p)
-##rem, div = p / p
-###print(rem)
-###print(div)
-
-#a = Poly([FField(4, 5), FField(2, 5), FField(3, 5), FField(0, 5), FField(4, 5)], 5)
-#b = Poly([FField(3, 5), FField(1, 5), FField(0, 5), FField(1, 5)], 5)
-##r, d = a / b
-##print(a / b, a % b)
-
-#print(a, 'der', a.deriv())
-
-#print(a, find_ord(a, a), find_ord(a * a * a * a, a))
-
-x8 = Poly([FField(0, 2), FField(0, 2), FField(0, 2), FField(0, 2), 
-           FField(0, 2), FField(0, 2), FField(0, 2), FField(0, 2), FField(1, 2)], 2)
-mods = Poly([FField(1, 2), FField(0, 2), FField(0, 2), FField(0, 2), FField(1, 2), FField(1, 2)], 2)
-#print(x8, mods)
-#print(x8 % mods)
-
-#m = berlekamp(mods)
-#gauss(m)
-
-five = FField(5, 11)
-print(five == 5, five == FField(5, 11), five == FField(6, 11), five == FField(8, 11))
+if __name__ == '__main__':
+    ##x = FField(10, 17)
+    ##y = FField(25, 17)
+    ### print(x + y, x * y, x / y, y / x, x / x)
+    
+    ##p = Poly([x, y, x, x, y], 17)
+    ###print(p) 
+    ###print(p * p)
+    ##rem, div = p / p
+    ###print(rem)
+    ###print(div)
+    
+    #a = Poly([FField(4, 5), FField(2, 5), FField(3, 5), FField(0, 5), FField(4, 5)], 5)
+    #b = Poly([FField(3, 5), FField(1, 5), FField(0, 5), FField(1, 5)], 5)
+    ##r, d = a / b
+    ##print(a / b, a % b)
+    
+    #print(a, 'der', a.deriv())
+    
+    #print(a, find_ord(a, a), find_ord(a * a * a * a, a))
+    
+    x8 = Poly([FField(0, 2), FField(0, 2), FField(0, 2), FField(0, 2), 
+               FField(0, 2), FField(0, 2), FField(0, 2), FField(0, 2), FField(1, 2)], 2)
+    mods = Poly([FField(1, 2), FField(0, 2), FField(0, 2), FField(0, 2), FField(1, 2), FField(1, 2)], 2)
+    #print(x8, mods)
+    #print(x8 % mods)
+    
+    
+    p = 3
+    f = Poly([FField(x,p) for x in [-1,-1,0,-1,1]], p)    
+    #m = berlekamp(mods)
+    m = berlekamp(f)
+    print(*m)
+    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
