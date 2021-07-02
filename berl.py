@@ -278,7 +278,10 @@ def Gauss(A, B):
     return ans, rank
 
 
-
+def normalize(f):
+    if len(f) > 0:
+        f /= Poly([f.coeffs[-1]], f.q)
+    return f
 
 def find_ord(f, g):
     # Степерь вхождения g в f
@@ -308,6 +311,7 @@ def berlekamp(f):
         # print('derived f', f, len(f))
         
         if len(f) == 2:
+            f = normalize(f)
             pord = find_ord(oldf, f)
             if pord > 0:
                 oldf /= f ** pord
@@ -357,7 +361,7 @@ def berlekamp(f):
                             changed = True
                             # remove and add
                             m[j] = gcd
-                            m.append(g / gcd)
+                            m.append(normalize(g / gcd))
                             # print([str(x) for x in m])
                             break
         
