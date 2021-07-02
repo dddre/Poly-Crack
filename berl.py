@@ -287,7 +287,7 @@ def berlekamp(f):
     oldf = f    
     while len(oldf) > 1:
         f = oldf
-        print(f, f.deriv(), f.gcd(f, f.deriv()))
+        # print(f, f.deriv(), f.gcd(f, f.deriv()))
         dergcd = f.gcd(f, f.deriv())
         while len(dergcd) > 1 or len(dergcd) == 0:
             if len(dergcd) == 0 or len(dergcd) == len(f):
@@ -298,7 +298,7 @@ def berlekamp(f):
                 f = f / dergcd
             dergcd = f.gcd(f, f.deriv())
             
-        print('derived f', f, len(f))
+        # print('derived f', f, len(f))
         
         if len(f) == 2:
             for p in m:
@@ -320,14 +320,14 @@ def berlekamp(f):
             matrix[i][i] -= FField(1, f.q)
             
         # transpose matrix
-        print(matrix)
+        # print(matrix)
         mt = [[matrix[j][i] for j in range(len(matrix))] for i in range(len(matrix[0]))]
         # print matrix
         #print('Matrix: ')
         #for i in mt:
             #print(' '.join(str(j) for j in i).replace('(mod ' + str(f.q) + ')', ''))
         
-        print('matrix ', mt)
+        # print('matrix ', mt)
         mtg, rank = Gauss(mt, [FField(0, f.q) for i in range(len(mt))])
         rank = len(mtg)
     
@@ -352,7 +352,7 @@ def berlekamp(f):
                             # remove and add
                             m[j] = gcd
                             m.append(g / gcd)
-                            print([str(x) for x in m])
+                            # print([str(x) for x in m])
                             break
         
         # return ans
