@@ -49,7 +49,7 @@ class FField:
         # Возведение в степень(не быстрое)
         return FField(self.n ** p, self.q)
     
-    def __str__(self):
+    def __repr__(self):
         # Строковое представление
         return '{} (mod {})'.format(self.n, self.q)
 
@@ -153,7 +153,7 @@ class Poly:
         # Остаток
         return (self // other)[1]
 
-    def __str__(self):
+    def __repr__(self):
         # Строковое представление
         if len(self) == 0:
             return '0'
@@ -384,5 +384,4 @@ if __name__ == '__main__':
     f = Poly([FField(x,p) for x in [-1,-1,0,-1,1]], p)    
     #m = berlekamp(mods)
     m = berlekamp(f)
-    for pol, pw in m:
-        print(pol, 'degree of inclusion is', pw)
+    print(m)
