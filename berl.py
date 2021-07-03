@@ -292,7 +292,7 @@ def find_ord(f, g):
         q, r = q // g
     return power
 
-def berlekamp(f):
+def berlekamp(f, irred = False):
     ans = []
     oldf = f    
     while len(oldf) > 1:
@@ -340,7 +340,8 @@ def berlekamp(f):
         # print('matrix ', mt)
         mtg, rank = Gauss(mt, [FField(0, f.q) for i in range(len(mt))])
         rank = len(mtg)
-    
+        if irred :
+            return rank == 1
         hs = [Poly(coefs, f.q) for coefs in mtg]
         #print([str(h) for h in hs])
       
